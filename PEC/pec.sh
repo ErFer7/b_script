@@ -70,10 +70,6 @@ function front() {
     yarn start:experimental
 }
 
-function go() {
-    cd $PEC_DIR
-}
-
 case $1 in
 
     setup | st)
@@ -87,9 +83,6 @@ case $1 in
         ;;
     front | fr)
         front
-        ;;
-    go)
-        go
         ;;
     build | b)
         build

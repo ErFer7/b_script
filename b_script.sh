@@ -2,7 +2,7 @@
 
 set -eu
 
-VERSION="0.3"
+VERSION="0.3.1"
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$(pwd)
 

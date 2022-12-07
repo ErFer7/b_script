@@ -16,3 +16,9 @@
 
 * Instalador criado
 * Comandos novos: go, build e resetbase
+
+---
+
+## v0.3.1
+
+* Comando go removido
