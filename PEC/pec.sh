@@ -2,16 +2,15 @@
 
 set -eu
 
-VERSION="0.2"
 SCRIPT_NAME=$(basename "$0")
 PEC_DIR=""
 
-touch .config
+touch configs/.config
 
 while IFS= read -r line; do
-    OPT=${line%% *}
+    OPTION=${line%% *}
 
-    case $OPT in
+    case $OPTION in
 
         PEC_DIR)
             PEC_DIR=${line##* }
@@ -20,28 +19,30 @@ while IFS= read -r line; do
             # Mais opções serão adicionadas no futuro
             ;;
     esac
-done < .config
+done < configs/.config
 
 function setup() {
     echo -n "PEC repository path: "
 
     read PEC_DIR
 
-    touch .config
-    > .config
+    touch configs/.config
+    > configs/.config
 
-    printf "PEC_DIR $PEC_DIR\n" > .config
+    printf "PEC_DIR $PEC_DIR\n" > configs/.config
 }
 
-function rebuild() {
-    echo "Rebuilding..."
-
+function build() {
     cd $PEC_DIR
 
     echo "Compiling..."
     mvn clean install -T 1C -DskipTests
+    echo "Done"
+}
 
+function reset_base() {
     echo "Reseting databases..."
+
     docker rm -f pec_postgres_1
     cd "$PEC_DIR/database"
     docker-compose up -d postgres
@@ -50,7 +51,13 @@ function rebuild() {
     echo "Loading data..."
     cd "$PEC_DIR/data-loader"
     mvn spring-boot:run -Dspring.profiles.active=dev,dev-postgres
+
     echo "Done"
+}
+
+function rebuild() {
+    build
+    reset_base
 }
 
 function run() {
@@ -61,6 +68,10 @@ function run() {
 function front() {
     cd "$PEC_DIR/frontend"
     yarn start:experimental
+}
+
+function go() {
+    cd $PEC_DIR
 }
 
 case $1 in
@@ -77,8 +88,16 @@ case $1 in
     front | fr)
         front
         ;;
+    go)
+        go
+        ;;
+    build | b)
+        build
+        ;;
+    resetbase | rba)
+        reset_base
+        ;;
     *)
         echo "Command not found"
         ;;
-
 esac
