@@ -2,7 +2,7 @@
 
 set -eu
 
-VERSION="0.1"
+VERSION="0.2"
 SCRIPT_NAME=$(basename "$0")
 PEC_DIR=""
 
@@ -53,14 +53,29 @@ function rebuild() {
     echo "Done"
 }
 
+function run() {
+    cd "$PEC_DIR/app-bundle"
+    mvn spring-boot:run -Dspring.profiles.active=dev,dev-postgres -Dbridge.flags.experimental=true
+}
+
+function front() {
+    cd "$PEC_DIR/frontend"
+    yarn start:experimental
+}
+
 case $1 in
 
     setup | st)
         setup
         ;;
-
     rebuild | rb)
         rebuild
+        ;;
+    run | r)
+        run
+        ;;
+    front | fr)
+        front
         ;;
     *)
         echo "Command not found"
