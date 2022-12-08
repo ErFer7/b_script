@@ -22,3 +22,9 @@
 ## v0.3.1
 
 * Comando go removido
+
+---
+
+## v0.4
+
+* Comando help adicionado

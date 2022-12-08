@@ -1,0 +1,9 @@
+#!/bin/bash
+cd /home/erfer/Documentos/Bridge/Code/b_script/PEC
+
+if [ -f "pec.sh" ]
+then
+    bash pec.sh "$@"
+else 
+    echo "pec.sh not found"
+fi

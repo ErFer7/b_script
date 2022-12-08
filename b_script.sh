@@ -2,23 +2,18 @@
 
 set -eu
 
-VERSION="0.3.2"
+VERSION="0.4"
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$(pwd)
 
-echo -n "b_script: (1) install, (2) uninstall: "
+echo -n "b_script: (i) install, (Any) uninstall: "
 read OPTION
 
-if [ $OPTION == "1" ]
+if [ $OPTION == "i" ]
 then
     echo "Installing..."
-
-    cd "$HOME/.local/bin"
-    touch pec
-    > pec
-    chmod a+x pec
-    printf "#!/bin/bash\ncd $SCRIPT_DIR/PEC\nbash pec.sh \"\$@\"\n" > pec
-
+    cp "PEC/pec_caller" "$HOME/.local/bin/pec"
+    chmod a+x "$HOME/.local/bin/pec"
     echo "Done"
     echo "Run the command: 'pec setup' to complete your installation"
 else

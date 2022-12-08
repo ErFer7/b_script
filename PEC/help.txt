@@ -1,0 +1,8 @@
+Commands:
+
+pec setup
+pec build
+pec resetbase
+pec rebuild
+pec run
+pec front

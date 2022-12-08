@@ -4,16 +4,21 @@ set -eu
 
 SCRIPT_NAME=$(basename "$0")
 PEC_DIR=""
+BUILD_CMD=""
 
 touch configs/.config
 
 while IFS= read -r line; do
+
     OPTION=${line%% *}
 
     case $OPTION in
 
         PEC_DIR)
-            PEC_DIR=${line##* }
+            PEC_DIR=$(cut -d " " -f2- <<< ${line})
+            ;;
+        BUILD_CMD)
+            BUILD_CMD=$(cut -d " " -f2- <<< ${line})
             ;;
         *)
             # Mais opções serão adicionadas no futuro
@@ -23,20 +28,23 @@ done < configs/.config
 
 function setup() {
     echo -n "PEC repository path: "
-
     read PEC_DIR
+
+    echo -n "Default build command: "
+    read BUILD_CMD
 
     touch configs/.config
     > configs/.config
 
-    printf "PEC_DIR $PEC_DIR\n" > configs/.config
+    printf "PEC_DIR $PEC_DIR\nBUILD_CMD $BUILD_CMD" > configs/.config
 }
 
 function build() {
     cd $PEC_DIR
 
     echo "Compiling..."
-    mvn clean install -T 1C -DskipTests
+    echo $BUILD_CMD
+    $BUILD_CMD
     echo "Done"
 }
 
@@ -72,6 +80,9 @@ function front() {
 
 case $1 in
 
+    help | h)
+        cat help.txt
+        ;;
     setup | st)
         setup
         ;;
