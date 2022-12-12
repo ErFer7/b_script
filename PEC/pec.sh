@@ -48,7 +48,7 @@ function build() {
     echo "Done"
 }
 
-function reset_base() {
+function reset-base() {
     echo "Reseting databases..."
 
     docker rm -f pec_postgres_1
@@ -65,7 +65,7 @@ function reset_base() {
 
 function rebuild() {
     build
-    reset_base
+    reset-base
 }
 
 function run() {
@@ -76,6 +76,24 @@ function run() {
 function front() {
     cd "$PEC_DIR/frontend"
     yarn start:experimental
+}
+
+function switch-branch() {
+    cd $PEC_DIR
+    git switch $1
+    git fetch
+    git pull
+}
+
+function update-all-branches() {
+    switch-branch "main"
+    switch-branch "stable"
+    switch-branch "next"
+}
+
+function git-status() {
+    cd $PEC_DIR
+    git status
 }
 
 case $1 in
@@ -99,7 +117,16 @@ case $1 in
         build
         ;;
     resetbase | rba)
-        reset_base
+        reset-base
+        ;;
+    switch | sw)
+        switch-branch $2
+        ;;
+    updatebranches | ub)
+        update-all-branches
+        ;;
+    gitstatus | gs)
+        git-status
         ;;
     *)
         echo "Command not found"

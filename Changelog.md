@@ -28,3 +28,9 @@
 ## v0.4
 
 * Comando help adicionado
+
+---
+
+## v0.5
+
+* Comandos switch, updatebranches e gitstatus adicionados

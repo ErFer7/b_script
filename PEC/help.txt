@@ -1,8 +1,12 @@
 Commands:
 
-pec setup
-pec build
-pec resetbase
-pec rebuild
-pec run
-pec front
+pec help            | pec h
+pec setup           | pec st
+pec build           | pec b
+pec resetbase       | pec rba
+pec rebuild         | pec rb
+pec run             | pec r
+pec front           | pec fr
+pec switch [branch] | pec sw
+pec updatebranches  | pec ub
+pec gitstatus       | pec gs
