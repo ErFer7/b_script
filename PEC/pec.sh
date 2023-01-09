@@ -5,6 +5,7 @@ set -eu
 SCRIPT_NAME=$(basename "$0")
 PEC_DIR=""
 BUILD_CMD=""
+FRONT_CMD=""
 
 touch configs/.config
 
@@ -20,6 +21,9 @@ while IFS= read -r line; do
         BUILD_CMD)
             BUILD_CMD=$(cut -d " " -f2- <<< ${line})
             ;;
+        FRONT_CMD)
+            FRONT_CMD=$(cut -d " " -f2- <<< ${line})
+            ;;
         *)
             # Mais opções serão adicionadas no futuro
             ;;
@@ -33,10 +37,13 @@ function setup() {
     echo -n "Default build command: "
     read BUILD_CMD
 
+    echo -n "Default frontend command: "
+    read FRONT_CMD
+
     touch configs/.config
     > configs/.config
 
-    printf "PEC_DIR $PEC_DIR\nBUILD_CMD $BUILD_CMD" > configs/.config
+    printf "PEC_DIR $PEC_DIR\nBUILD_CMD $BUILD_CMD\nFRONT_CMD $FRONT_CMD" > configs/.config
 }
 
 function build() {
@@ -75,12 +82,16 @@ function run() {
 
 function front() {
     cd "$PEC_DIR/frontend"
-    yarn start:experimental
+    $FRONT_CMD
 }
 
 function switch-branch() {
     cd $PEC_DIR
     git switch $1
+    update-branch
+}
+
+function update-branch() {
     git fetch
     git pull
 }
@@ -122,7 +133,10 @@ case $1 in
     switch | sw)
         switch-branch $2
         ;;
-    updatebranches | ub)
+    updatebranch | ub)
+        update-branch
+        ;;
+    updatebranches | ubs)
         update-all-branches
         ;;
     gitstatus | gs)

@@ -8,5 +8,6 @@ pec rebuild         | pec rb
 pec run             | pec r
 pec front           | pec fr
 pec switch [branch] | pec sw
-pec updatebranches  | pec ub
+pec updatebranch    | pec ub
+pec updatebranches  | pec ubs
 pec gitstatus       | pec gs

@@ -34,3 +34,9 @@
 ## v0.5
 
 * Comandos switch, updatebranches e gitstatus adicionados
+
+---
+
+## v0.6
+
+* Comandos personalizados para o frontend adicionados
