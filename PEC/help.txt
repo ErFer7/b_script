@@ -1,13 +1,19 @@
 Commands:
 
-pec help            | pec h
-pec setup           | pec st
-pec build           | pec b
-pec resetbase       | pec rba
-pec rebuild         | pec rb
-pec run             | pec r
-pec front           | pec fr
-pec switch [branch] | pec sw
-pec updatebranch    | pec ub
-pec updatebranches  | pec ubs
-pec gitstatus       | pec gs
+pec help                    | pec h
+pec setup                   | pec st
+pec newpreset [preset]      | pec np [preset]
+pec removepreset [preset]   | pec rp [preset]
+pec listpresets             | pec lp
+pec currentpreset           | pec cp
+pec setpreset [preset]      | pec sp [preset]
+pec build                   | pec b
+pec resetbase               | pec rba
+pec rebuild                 | pec rb
+pec run                     | pec r
+pec front                   | pec fr
+pec switch [branch]         | pec sw [branch]
+pec updatebranch            | pec ub
+pec updatebranches          | pec ubs
+pec gitstatus               | pec gs
+pec debug                   | pec dbg

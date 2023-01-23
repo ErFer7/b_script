@@ -40,3 +40,10 @@
 ## v0.6
 
 * Comandos personalizados para o frontend adicionados
+
+---
+
+## v0.7
+
+* Presets adicionados
+* Comando para debug adicionado

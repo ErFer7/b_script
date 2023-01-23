@@ -3,47 +3,141 @@
 set -eu
 
 SCRIPT_NAME=$(basename "$0")
+CURRENT_PRESET=""
+PRESET_FILE=""
 PEC_DIR=""
 BUILD_CMD=""
 FRONT_CMD=""
 
-touch configs/.config
+function read-config() {
+    touch configs/.config
 
-while IFS= read -r line; do
+    while IFS= read -r line; do
 
-    OPTION=${line%% *}
+        OPTION=${line%% *}
 
-    case $OPTION in
+        case $OPTION in
 
-        PEC_DIR)
-            PEC_DIR=$(cut -d " " -f2- <<< ${line})
-            ;;
-        BUILD_CMD)
-            BUILD_CMD=$(cut -d " " -f2- <<< ${line})
-            ;;
-        FRONT_CMD)
-            FRONT_CMD=$(cut -d " " -f2- <<< ${line})
-            ;;
-        *)
-            # Mais opções serão adicionadas no futuro
-            ;;
-    esac
-done < configs/.config
+            CURRENT_PRESET)
+                set-preset-internal $(cut -d " " -f2- <<< ${line})
+                ;;
+            *)
+                # Mais opções serão adicionadas no futuro
+                ;;
+        esac
+    done < configs/.config
 
-function setup() {
+    touch "configs/presets/${PRESET_FILE}"
+}
+
+function read-preset() {
+    while IFS= read -r line; do
+
+        OPTION=${line%% *}
+
+        case $OPTION in
+
+            PEC_DIR)
+                PEC_DIR=$(cut -d " " -f2- <<< ${line})
+                ;;
+            BUILD_CMD)
+                BUILD_CMD=$(cut -d " " -f2- <<< ${line})
+                ;;
+            FRONT_CMD)
+                FRONT_CMD=$(cut -d " " -f2- <<< ${line})
+                ;;
+            *)
+                # Mais opções serão adicionadas no futuro
+                ;;
+        esac
+    done < "configs/presets/${PRESET_FILE}"
+}
+
+function new-preset() {
+    local is_default=$1
+
+    if [ "$is_default" = "true" ]
+    then
+        set-preset-internal $2
+
+        if [ -f "configs/presets/${PRESET_FILE}" ]
+        then
+            echo -n "The file $PRESET_FILE already exists. Do you want to override this preset? [Y/n]: "
+            local answer
+            read answer
+
+            if [ "$answer" = "n" ]
+            then
+                return
+            fi
+        fi
+    else
+        set-preset-internal "default"
+    fi
+
     echo -n "PEC repository path: "
     read PEC_DIR
 
-    echo -n "Default build command: "
+    echo -n "Build command: "
     read BUILD_CMD
 
-    echo -n "Default frontend command: "
+    echo -n "Frontend command: "
     read FRONT_CMD
 
-    touch configs/.config
-    > configs/.config
+    touch "configs/presets/${PRESET_FILE}"
+    > "configs/presets/${PRESET_FILE}"
+    printf "PEC_DIR $PEC_DIR\nBUILD_CMD $BUILD_CMD\nFRONT_CMD $FRONT_CMD\n" > "configs/presets/${PRESET_FILE}"
+}
 
-    printf "PEC_DIR $PEC_DIR\nBUILD_CMD $BUILD_CMD\nFRONT_CMD $FRONT_CMD" > configs/.config
+function remove-preset() {
+    local previous_preset=$CURRENT_PRESET
+    set-preset-internal $1
+
+    if [ -f "configs/presets/${PRESET_FILE}" ]
+    then
+        rm "configs/presets/${PRESET_FILE}"
+        echo "Preset $CURRENT_PRESET removed"
+
+        if [ "$1" = "$previous_preset" ]
+        then
+            set-preset "default"
+        fi
+    else
+        echo "The preset $CURRENT_PRESET doesn't exist"
+    fi
+}
+
+function set-preset-internal() {
+    CURRENT_PRESET=$1
+    PRESET_FILE="${CURRENT_PRESET}.txt"   
+}
+
+function set-preset() {
+    set-preset-internal $1
+
+    if [ -f "configs/presets/${PRESET_FILE}" ]
+    then
+        echo "Setting $CURRENT_PRESET as the current preset"
+        read-preset
+
+        > "configs/.config"
+        printf "CURRENT_PRESET $CURRENT_PRESET\n" > "configs/.config"
+    else
+        echo "The preset $CURRENT_PRESET doesn't exist"
+    fi
+}
+
+function get-current-preset() {
+    echo $CURRENT_PRESET
+}
+
+function list-presets() {
+    echo "Presets:"
+
+    for file in "configs/presets"/*
+    do
+        echo "$(basename $file .txt)"
+    done
 }
 
 function build() {
@@ -107,13 +201,41 @@ function git-status() {
     git status
 }
 
+function debug() {
+    echo $SCRIPT_NAME
+    echo $CURRENT_PRESET
+    echo $PRESET_FILE
+    echo $PEC_DIR
+    echo $BUILD_CMD
+    echo $FRONT_CMD
+}
+
+# Inicialização
+read-config
+read-preset
+
 case $1 in
 
     help | h)
         cat help.txt
         ;;
     setup | st)
-        setup
+        new-preset "false" $2
+        ;;
+    newpreset | np)
+        new-preset "true" $2
+        ;;
+    removepreset | rp)
+        remove-preset $2
+        ;;
+    listpresets | lp)
+        list-presets
+        ;;
+    currentpreset | cp)
+        get-current-preset
+        ;;
+    setpreset | sp)
+        set-preset $2
         ;;
     rebuild | rb)
         rebuild
@@ -141,6 +263,9 @@ case $1 in
         ;;
     gitstatus | gs)
         git-status
+        ;;
+    debug | dbg)
+        debug
         ;;
     *)
         echo "Command not found"
