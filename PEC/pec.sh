@@ -27,6 +27,11 @@ function read-config() {
         esac
     done < configs/.config
 
+    if [ "$CURRENT_PRESET" = "" ]
+    then
+        set-preset "default"
+    fi
+
     touch "configs/presets/${PRESET_FILE}"
 }
 

@@ -47,3 +47,9 @@
 
 * Presets adicionados
 * Comando para debug adicionado
+
+---
+
+## v0.7.1
+
+* Agora o arquivo de configurações é gerado automaticamente
