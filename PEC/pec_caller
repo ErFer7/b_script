@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/erfer/Documentos/Bridge/Code/b_script/PEC
+cd /home/erfer/Documents/Bridge/Code/b_script/PEC
 
 if [ -f "pec.sh" ]
 then
