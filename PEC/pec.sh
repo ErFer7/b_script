@@ -159,7 +159,7 @@ function reset-base() {
 
     docker rm -f pec_postgres_1
     cd "$PEC_DIR/database"
-    docker-compose up -d postgres
+    docker compose up -d postgres
     mvn spring-boot:run -Dspring.liquibase.contexts=experimental
 
     echo "Loading data..."
